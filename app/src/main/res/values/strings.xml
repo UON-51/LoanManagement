@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">LoanManagement</string>
+    <string name="total_amount"> Total Amount</string>
+    <string name="loan_date">Date</string>
+    <string name="loaner_name">Loaner</string>
+    <string name="loan_amount">Amount</string>
+    <string name="loan_isPaid">Is Paid</string>
+    <string name="loan_note">Note</string>
+    <string name="isPaid_yes">Yes</string>
+    <string name="isPaid_no">No</string>
+<!-- TODO: Remove or change this placeholder text -->
+</resources>

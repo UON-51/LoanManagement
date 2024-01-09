@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">LoanManagement</string>
+    <string name="total_amount">總金額</string>
+    <string name="loan_date">日期</string>
+    <string name="loaner_name">借款人</string>
+    <string name="loan_amount">金額</string>
+    <string name="loan_isPaid">已付款</string>
+    <string name="loan_note">註記</string>
+    <string name="isPaid_yes">是</string>
+    <string name="isPaid_no">否</string>
+</resources>
