@@ -9,4 +9,14 @@
     <string name="loan_note">註記</string>
     <string name="isPaid_yes">是</string>
     <string name="isPaid_no">否</string>
+
+    <string-array name="isPaidSpinner">
+        <item>是</item>
+        <item>否</item>
+    </string-array>
+    <string name="loaner_name_hint">請輸入或選擇借款人名稱</string>
+    <string name="loan_note_hint">請輸入註記</string>
+    <string name="cancel">取消</string>
+    <string name="add">新增</string>
+    <string name="edit">修改</string>
 </resources>

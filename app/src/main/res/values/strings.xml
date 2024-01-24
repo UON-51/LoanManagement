@@ -3,10 +3,20 @@
     <string name="total_amount"> Total Amount</string>
     <string name="loan_date">Date</string>
     <string name="loaner_name">Loaner</string>
+    <string name="loaner_name_hint">Type or choose Loaner name</string>
     <string name="loan_amount">Amount</string>
     <string name="loan_isPaid">Is Paid</string>
     <string name="loan_note">Note</string>
+    <string name="loan_note_hint">Type Note here</string>
     <string name="isPaid_yes">Yes</string>
     <string name="isPaid_no">No</string>
-<!-- TODO: Remove or change this placeholder text -->
+    <string name="cancel">cancel</string>
+    <string name="add">add</string>
+    <string name="edit">edit</string>
+
+    <string-array name="isPaidSpinner">
+        <item>Yes</item>
+        <item>No</item>
+    </string-array>
+
 </resources>

@@ -16,11 +16,10 @@ interface LoanDao {
     @Query("DELETE FROM Loan WHERE loanId IN (:loanIds)")
     fun loanDelete(loanIds: IntArray)
 
-    @Query("SELECT * FROM Loan ORDER BY loanId")
-    fun getAllLoan():LiveData<List<LoanEntity>>
 
     @Update
     fun updateLoan(loan : LoanEntity):Int
+
 
     @Query("SELECT * FROM Loan WHERE " +
             "(loanerName LIKE :loanerName OR :loanerName IS NULL) " +

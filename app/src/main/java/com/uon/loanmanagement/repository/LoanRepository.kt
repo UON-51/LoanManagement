@@ -2,7 +2,6 @@ package com.uon.loanmanagement.repository
 
 
 import android.util.Log
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import com.uon.loanmanagement.model.LoanDao
 import com.uon.loanmanagement.model.LoanEntity
@@ -13,7 +12,7 @@ import kotlinx.coroutines.withContext
 class LoanRepository(private val loanDao : LoanDao) {
 
 
-    val allLoans: LiveData<List<LoanEntity>> = loanDao.getAllLoan() //get all loan data when repository init
+    //val allLoans: LiveData<List<LoanEntity>> = loanDao.getAllLoan() //get all loan data when repository init
     val searchResultMediator = MediatorLiveData<List<LoanEntity>>() //create a mediatorLiveData for storage search result
 
 
@@ -48,7 +47,7 @@ class LoanRepository(private val loanDao : LoanDao) {
 
             searchResultMediator.addSource(searchResult){
                     result ->
-                searchResultMediator.value = result
+                searchResultMediator.postValue(result)
             }
         }
     }
