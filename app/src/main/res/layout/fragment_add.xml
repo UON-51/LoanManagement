@@ -7,27 +7,23 @@
         <variable
             name="viewModel"
             type="com.uon.loanmanagement.viewmodel.LoanViewModel" />
+
         <variable
-            name="loanerNameSearch"
+            name="loanerName"
             type="String" />
         <variable
-            name="loanAmountSearchStart"
+            name="loanAmount"
             type="String" />
         <variable
-            name="loanAmountSearchEnd"
+            name="loanDate"
             type="String" />
         <variable
-            name="loanDateSearchStart"
-            type="String" />
-        <variable
-            name="loanDateSearchEnd"
-            type="String" />
-        <variable
-            name="loanIsPaidSearch"
+            name="loanIsPaid"
             type="Integer" />
         <variable
-            name="loanNoteSearch"
+            name="loanNote"
             type="String" />
+
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -35,7 +31,7 @@
         android:layout_height="match_parent"
         android:background="@color/white"
         android:orientation="vertical"
-        tools:context=".view.fragment.SearchFragment">
+        tools:context=".view.fragment.AddFragment">
 
         <LinearLayout
             android:layout_width="0dp"
@@ -98,107 +94,58 @@
             app:layout_constraintTop_toTopOf="parent">
 
             <AutoCompleteTextView
-                android:id="@+id/searchLoanerNameAutoCompleteTextView"
+                android:id="@+id/addLoanerNameAutoCompleteTextView"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:inputType="text"
-                android:completionThreshold="1"
-                android:hint="@string/loaner_name_hint"
-                android:text="@={loanerNameSearch}" />
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:orientation="horizontal">
-                <EditText
-                    android:id="@+id/searchAmountStartEditText"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:text="@={loanAmountSearchStart}"
-                    android:ems="10"
-                    android:gravity="center"
-                    android:hint="@string/zero"
-                    android:inputType="numberDecimal" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_weight="0"
-                    android:gravity="center"
-                    android:text="~"
-                    android:textSize="20sp"
-                    app:autoSizeMinTextSize="25sp" />
-
-                <EditText
-                    android:id="@+id/searchAmountEndEditText"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:text="@={loanAmountSearchEnd}"
-                    android:layout_weight="1"
-                    android:ems="10"
-                    android:gravity="center"
-                    android:hint="@string/zero"
-                    android:inputType="numberDecimal" />
-            </LinearLayout>
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="horizontal"
-                android:layout_weight="1">
-                <TextView
-                    android:id="@+id/searchDateStartTextView"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:text="@={loanDateSearchStart}"
-                    android:ems="10"
-                    android:hint="@string/loan_date_hint"
-                    android:gravity="center"
-                    android:inputType="date" />
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_weight="0"
-                    android:gravity="center"
-                    android:text="~"
-                    android:textSize="20sp"
-                    app:autoSizeMinTextSize="25sp" />
-                <TextView
-                    android:id="@+id/searchDateEndTextView"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:ems="10"
-                    android:text="@={loanDateSearchEnd}"
-                    android:hint="@string/loan_date_hint"
-                    android:gravity="center"
-                    android:inputType="date" />
-            </LinearLayout>
-
-
-            <Spinner
-                android:id="@+id/searchIsPaidSpinner"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:selectedItemPosition="@={loanIsPaidSearch}"
-                android:entries="@array/isSearchPaidSpinner"
-                />
+                android:completionThreshold= "1"
+                android:text="@={loanerName}"
+                android:hint="@string/loaner_name_hint" />
 
             <EditText
-                android:id="@+id/searchNoteEditText"
+                android:id="@+id/addAmountEditText"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:ems="10"
-                android:text="@={loanNoteSearch}"
-                android:hint="@string/loan_note_search_hint"
-                android:inputType="text" />
+                android:text="@={loanAmount}"
+                android:inputType="numberDecimal"
+                android:hint="@string/zero" />
+
+            <TextView
+                android:id="@+id/addDateTextView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:ems="10"
+                android:hint="@string/loan_date_hint"
+                android:gravity="center|start"
+                android:text="@={loanDate}"
+                android:inputType="date" />
+
+            <Spinner
+                android:id="@+id/addIsPaidSpinner"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:entries="@array/isPaidSpinner"
+                android:selectedItemPosition="@={loanIsPaid}"
+                />
 
 
+            <EditText
+                android:id="@+id/addNoteEditText"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:ems="10"
+                android:lines="3"
+                android:maxLines="3"
+                android:scrollbars="vertical"
+                android:inputType="textMultiLine"
+                android:hint="@string/loan_note_hint"
+                android:text="@={loanNote}" />
         </LinearLayout>
 
         <LinearLayout
@@ -208,16 +155,12 @@
             android:gravity="center"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toTopOf="@id/guidelineHorizon">
-
-
             <Button
-                android:id="@+id/button_edit_add_confirm"
+                android:id="@+id/addConfirmButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:onClick="@{()-> viewModel.loanSearch(loanerNameSearch,loanAmountSearchStart,loanAmountSearchEnd,loanDateSearchStart,loanDateSearchEnd,loanIsPaidSearch,loanNoteSearch)}"
-                android:text="@string/search" />
-
-
+                android:onClick="@{()-> viewModel.loanInsert(loanerName,loanAmount,loanDate,loanIsPaid,loanNote)}"
+                android:text="@string/add" />
 
         </LinearLayout>
 

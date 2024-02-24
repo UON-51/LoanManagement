@@ -7,12 +7,11 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.uon.loanmanagement.R
 import com.uon.loanmanagement.databinding.FragmentMainBinding
-import com.uon.loanmanagement.view.recycleview.LoanAdapter
+import com.uon.loanmanagement.view.adapter.LoanAdapter
 import com.uon.loanmanagement.viewmodel.LoanViewModel
 
 class MainFragment : Fragment() {

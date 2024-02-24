@@ -10,7 +10,9 @@ import androidx.fragment.app.Fragment
 import com.uon.loanmanagement.R
 import com.uon.loanmanagement.view.fragment.SearchFragment
 import com.uon.loanmanagement.databinding.ActivityMainBinding
-import com.uon.loanmanagement.view.fragment.EditAddFragment
+import com.uon.loanmanagement.view.fragment.AddFragment
+
+import com.uon.loanmanagement.view.fragment.EditFragment
 import com.uon.loanmanagement.view.fragment.MainFragment
 import com.uon.loanmanagement.viewmodel.LoanViewModel
 
@@ -22,7 +24,6 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         navigateToFragment(MainFragment())
 
         binding = DataBindingUtil.setContentView(this,R.layout.activity_main)
@@ -35,11 +36,13 @@ class MainActivity : AppCompatActivity() {
                 R.id.menu_search -> {
                     navigateToFragment(SearchFragment())
                     showNavigationIcon()
+                    binding.topToolBar.setTitle(R.string.search_record)
                     true
                 }
                 R.id.menu_add -> {
-                    navigateToFragment(EditAddFragment())
+                    navigateToFragment(AddFragment())
                     showNavigationIcon()
+                    binding.topToolBar.setTitle(R.string.add_record)
                     true
                 }
                 else -> {false}
@@ -48,11 +51,13 @@ class MainActivity : AppCompatActivity() {
 
         binding.topToolBar.setNavigationOnClickListener {
             navigateToFragment(MainFragment())
+            binding.topToolBar.setTitle(R.string.all_record)
         }
 
         loanViewModel.selectedLoan.observe(this){
-            navigateToFragment(EditAddFragment())
+            navigateToFragment(EditFragment())
             showNavigationIcon()
+            binding.topToolBar.setTitle(R.string.edit_record)
         }
 
         loanViewModel.isInDefault.observe(this){
@@ -62,16 +67,20 @@ class MainActivity : AppCompatActivity() {
                 showNavigationIcon()
             }
         }
+        loanViewModel.navigateToMainFragment.observe(this){
+            if (it){
+                navigateToFragment(MainFragment())
+            }
+        }
     }
 
-    fun showNavigationIcon(){
+    private fun showNavigationIcon(){
         binding.topToolBar.setNavigationIcon(com.google.android.material.R.drawable.material_ic_keyboard_arrow_left_black_24dp)
     }
 
-    fun navigateToFragment(targetFragment:Fragment){
+    private fun navigateToFragment(targetFragment:Fragment){
         supportFragmentManager.beginTransaction()
             .replace(R.id.fragmentContainerView,targetFragment)
             .commit()
     }
-
 }

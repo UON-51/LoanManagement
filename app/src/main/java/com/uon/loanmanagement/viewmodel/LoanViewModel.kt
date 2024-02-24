@@ -1,6 +1,7 @@
 package com.uon.loanmanagement.viewmodel
 
 import android.app.Application
+import android.util.Log
 
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
@@ -11,63 +12,148 @@ import com.uon.loanmanagement.model.LoanDatabase
 import com.uon.loanmanagement.model.LoanEntity
 import com.uon.loanmanagement.repository.LoanRepository
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
 
 
 class LoanViewModel(application: Application): AndroidViewModel(application) {
-
     private val loanRepository: LoanRepository by lazy {
         LoanRepository(loanDao)
     }
 
-    val nowTitle: MutableLiveData<String> = MutableLiveData("AllRecord") //todo get from loanerName
+    private val _nowTitle: MutableLiveData<String> = MutableLiveData("AllRecord") //todo get from loanerName
+    val nowTitle: LiveData<String> get() = _nowTitle
     private val loanDao = LoanDatabase.getDatabase(application).loanDao()
     val selectedLoan : MutableLiveData<LoanEntity> = MutableLiveData()
-    private val _searchSetting : MutableLiveData<LoanEntity> = MutableLiveData()
+
+    private val _navigateToMainFragment : MutableLiveData<Boolean> = MutableLiveData(true)
+    val navigateToMainFragment : LiveData<Boolean> get() = _navigateToMainFragment
     private val _isInDefault : MutableLiveData<Boolean> = MutableLiveData(true)
     val isInDefault : LiveData<Boolean> get() = _isInDefault
-
-
-
-
+    private val _insertFieldsIsEmpty : MutableLiveData<Boolean> = MutableLiveData(false)
+    val insertFieldsIsEmpty : LiveData<Boolean> get() = _insertFieldsIsEmpty
 
     private val _searchResult : MediatorLiveData<List<LoanEntity>> = loanRepository.searchResultMediator
     val searchResult : LiveData<List<LoanEntity>> get() = _searchResult
-
-
+    private val _distinctLoanerName : MediatorLiveData<List<String>> = loanRepository.distinctLoanerNamesMediator
+    val distinctLoanerName : LiveData<List<String>> get() = _distinctLoanerName
 
     init {
-        searchResultObserving()
+        searchResultInit()
+        distinctLoanerNamesInit()
+        /*
+        isInDefault.observeForever {
+            if (it){
+                searchResultInit()
+            }
+        }
+         */
     }
 
-    fun loanSearch(loanerName: String?, amount: Float?,dateStart:Long?,dateEnd:Long?, isPaid: Boolean?, searchTerm: String?){
+    fun loanSearch(loanerName: String?, amountStartString: String?,amountEndString: String?,dateStartString:String?,dateEndString:String?, isPaidInt: Int, searchTermString: String?){
         //TODO finish search function link
-        viewModelScope.launch {
-            loanRepository.loanSearch(loanerName,amount,dateStart, dateEnd,isPaid,searchTerm)
+        _navigateToMainFragment.postValue(false)
+        try {
+            //Avoid sending blank content and format error
+            val loanerNameChecked : String? = if (loanerName.isNullOrEmpty()) null else loanerName
+            val searchTermStringChecked : String? = if (searchTermString.isNullOrEmpty()) null else searchTermString
+            val amountStartFloat: Float? =
+                if (amountStartString.isNullOrEmpty()) null else amountStartString.toFloat()
+            val amountEndFloat: Float? =
+                if (amountEndString.isNullOrEmpty()) null else amountEndString.toFloat()
+            val dateStartLong: Long? =
+                if (dateStartString.isNullOrEmpty()) null else dateStartString.toLong()
+            val dateEndLong: Long? =
+                if (dateEndString.isNullOrEmpty()) null else dateEndString.toLong()
+            val isPaidBoolean: Boolean? = when (isPaidInt) {
+                0 -> null
+                1 -> true
+                2 -> false
+                else -> null
+            }
+
+            viewModelScope.launch {
+                loanRepository.loanSearch(
+                    loanerNameChecked,
+                    amountStartFloat,
+                    amountEndFloat,
+                    dateStartLong,
+                    dateEndLong,
+                    isPaidBoolean,
+                    searchTermStringChecked
+                )
+            }
+            _isInDefault.postValue(false)
+            if (!loanerNameChecked.isNullOrEmpty()) {
+                _nowTitle.postValue(loanerNameChecked!!)
+            }
+            _navigateToMainFragment.postValue(true)
+        } catch (e:Exception){
+            Log.d("Search Error","Search Error: $e")
         }
     }
 
-    fun loanUpdate(loan: LoanEntity){
-        viewModelScope.launch {
-            loanRepository.loanUpdate(loan)
+
+    fun loanDelete(loanId:Int){
+        _navigateToMainFragment.postValue(false)
+        try {
+            viewModelScope.launch {
+                loanRepository.loanDelete(loanId)
+            }
+            _navigateToMainFragment.postValue(true)
+        } catch (e:Exception){
+            Log.d("Delete Error","Delete Error: $e")
         }
+
+
     }
 
-    fun loanDelete(loanIds: IntArray){
-        viewModelScope.launch {
-            loanRepository.loanDelete(loanIds)
+
+    fun loanInsert(loanerName :String?, amountString :String?, dateString :String?, isPaidInt :Int, note:String?){
+        _navigateToMainFragment.postValue(false)
+        try {
+            if (loanerName.isNullOrEmpty() || amountString.isNullOrEmpty() || dateString.isNullOrEmpty() || note.isNullOrEmpty()){
+                _insertFieldsIsEmpty.postValue(true) //maybe can add witch field is blank message
+                _navigateToMainFragment.postValue(false)
+            } else {
+                val isPaidBoolean = isPaidInt == 0
+                val amountFloat = amountString.toFloat()
+                val dateLong = SimpleDateFormat("yyyy/MM/dd").parse(dateString).time
+                val loan2Insert = LoanEntity(
+                    loanerName = loanerName,
+                    amount = amountFloat,
+                    date = dateLong,
+                    isPaid = isPaidBoolean,
+                    note = note
+                )
+                viewModelScope.launch {
+                    loanRepository.loanInsert(loan2Insert)
+                }
+                _insertFieldsIsEmpty.postValue(false)
+                _navigateToMainFragment.postValue(true)
+            }
+        } catch (e:Exception){
+            Log.d("Add Error","Add Error: $e")
         }
+
     }
-
-    fun loanInsert(loanId:String?,loanerName :String, amount :Float, date :Long, isPaid :Boolean, note:String){
-        val loan2Insert : LoanEntity
-        if  (loanId.isNullOrEmpty()){
-            loan2Insert = LoanEntity(loanerName = loanerName, amount = amount, date = date, isPaid = isPaid, note = note)
-        } else {
-            loan2Insert = LoanEntity(loanId = loanId.toInt(),loanerName = loanerName, amount = amount, date = date, isPaid = isPaid, note = note)
-        }
-
-        viewModelScope.launch {
-            loanRepository.loanInsert(loan2Insert)
+    fun loanUpdate(loanId:Int,loanerName :String, amountString :String, dateString :String, isPaidInt :Int, note:String){
+        _navigateToMainFragment.postValue(false)
+        try {
+            if (loanerName.isEmpty() || amountString.isEmpty() || dateString.isEmpty() || note.isEmpty()){
+                _insertFieldsIsEmpty.postValue(true) //maybe can add witch field is blank message
+            } else {
+                val isPaidBoolean = isPaidInt==0
+                val amountFloat = amountString.toFloat()
+                val dateLong = SimpleDateFormat("yyyy/MM/dd").parse(dateString).time
+                val loan2Update = LoanEntity(loanId = loanId,loanerName = loanerName, amount = amountFloat, date = dateLong, isPaid = isPaidBoolean, note = note)
+                viewModelScope.launch {
+                    loanRepository.loanInsert(loan2Update)
+                }
+                _insertFieldsIsEmpty.postValue(false)
+                _navigateToMainFragment.postValue(true)
+            }
+        } catch (e:Exception){
+            Log.d("Update Error","Update Error: $e")
         }
 
     }
@@ -78,47 +164,20 @@ class LoanViewModel(application: Application): AndroidViewModel(application) {
         selectedLoan.value = loan
     }
 
-    fun getSearchSetting(){
-
+    fun searchEnd(){
+        _isInDefault.postValue(true)
     }
 
-    fun searchResultObserving(){
+
+    private fun searchResultInit(){
         viewModelScope.launch {
-            loanRepository.loanSearch(null,null,null,null,null,null)
+            loanRepository.loanSearch(null,null,null,null,null,null,null)
         }
     }
-
-
-
-
-
-
-
-
-    fun loanInsertTest(){
-        for (i in 0 .. 10){
-            var testLoan = LoanEntity( loanerName = "johny$i", amount = 1000F * i, date = 1704751862380, isPaid = false, note = "Test$i")
-            viewModelScope.launch {
-                loanRepository.loanInsert(testLoan)
-            }
-        }
-    }
-    fun loanUpdateTest(){
-        var testLoan = LoanEntity(loanId=5, loanerName="johny4", amount=4000F, date=1704751862380, isPaid=false, note="EditTest4")
+    private fun distinctLoanerNamesInit(){
         viewModelScope.launch {
-            loanRepository.loanInsert(testLoan)
+            loanRepository.getDistinctLoanerNames()
         }
     }
-
-
-
-
-
-
-
-
-
-
-
 
 }

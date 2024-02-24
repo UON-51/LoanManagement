@@ -1,17 +1,13 @@
-package com.uon.loanmanagement.view.recycleview
+package com.uon.loanmanagement.view.adapter
 
 
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import android.widget.TextView
-import androidx.databinding.BindingAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.uon.loanmanagement.databinding.ItemLoanBinding
 import com.uon.loanmanagement.model.LoanEntity
 import com.uon.loanmanagement.viewmodel.LoanViewModel
-import java.text.SimpleDateFormat
-import java.util.Date
 
 class LoanAdapter(private val viewModel: LoanViewModel) : RecyclerView.Adapter<LoanAdapter.LoanViewHolder>() {
     private val items: MutableList<LoanEntity> = mutableListOf()
@@ -52,8 +48,3 @@ class LoanAdapter(private val viewModel: LoanViewModel) : RecyclerView.Adapter<L
 
 }
 
-@BindingAdapter("convertLongToDate")
-fun convertLongToDate(textView:TextView,date:Long){
-    //todo To get local formatting use `getDateInstance()`, `getDateTimeInstance()`, or `getTimeInstance()`, or use `new SimpleDateFormat(String template, Locale locale)` with for example `Locale.US` for ASCII dates.
-    textView.text = SimpleDateFormat("yyyy/MM/dd").format(Date(date))
-}

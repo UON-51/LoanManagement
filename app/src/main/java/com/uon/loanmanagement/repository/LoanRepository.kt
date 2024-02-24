@@ -2,6 +2,7 @@ package com.uon.loanmanagement.repository
 
 
 import android.util.Log
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import com.uon.loanmanagement.model.LoanDao
 import com.uon.loanmanagement.model.LoanEntity
@@ -10,45 +11,55 @@ import kotlinx.coroutines.withContext
 
 
 class LoanRepository(private val loanDao : LoanDao) {
-
-
-    //val allLoans: LiveData<List<LoanEntity>> = loanDao.getAllLoan() //get all loan data when repository init
+    // TODO: switch from MediatorLiveData to mutableLiveData
     val searchResultMediator = MediatorLiveData<List<LoanEntity>>() //create a mediatorLiveData for storage search result
+    val distinctLoanerNamesMediator = MediatorLiveData<List<String>>()
+    private var _isInit = false
+    private lateinit var _searchResult : LiveData<List<LoanEntity>>
 
 
-    //update loan record function
-    suspend fun loanUpdate(loan: LoanEntity) {
-        withContext(Dispatchers.IO) {
-           if (loanDao.updateLoan(loan)==1){
-               Log.d("Room","update success")
-           }
-        }
-
-    }
-
-    //insert loan record function
+    //function for insert loan record
     suspend fun loanInsert(loan: LoanEntity) {
         withContext(Dispatchers.IO) {
             loanDao.loanInsert(loan)
+            Log.d("searchTest","loanInsert")
         }
     }
 
-    //delete loan record function
-    suspend fun loanDelete(loanIds: IntArray) {
-        withContext(Dispatchers.IO) {
-            loanDao.loanDelete(loanIds)
-        }
-    }
-
-    //search loan function
-    suspend fun loanSearch(loanerName: String?, amount: Float?,dateStart:Long?,dateEnd:Long?, isPaid: Boolean?, searchTerm: String?) {
-        withContext(Dispatchers.IO) {
-            val searchResult = loanDao.searchLoans(loanerName,amount,dateStart, dateEnd,isPaid,searchTerm)
-
-            searchResultMediator.addSource(searchResult){
+    //function for get all distinct loaner name
+    suspend fun getDistinctLoanerNames(){
+        withContext(Dispatchers.IO){
+            val distinctLoanerNames = loanDao.getDistinctLoanerNames()
+            distinctLoanerNamesMediator.addSource(distinctLoanerNames){
                     result ->
-                searchResultMediator.postValue(result)
+                distinctLoanerNamesMediator.postValue(result)
             }
         }
     }
+
+    //function for delete loan record
+    suspend fun loanDelete(loanId: Int) {
+        withContext(Dispatchers.IO) {
+            loanDao.loanDelete(loanId)
+            Log.d("searchTest","loanDelete")
+        }
+    }
+
+    //function for search loan record
+    suspend fun loanSearch(loanerName: String?, amountStart: Float?,amountEnd: Float?,dateStart:Long?,dateEnd:Long?, isPaid: Boolean?, searchTerm: String?) {
+        if (_isInit){
+            searchResultMediator.removeSource(_searchResult)
+        }
+
+        withContext(Dispatchers.IO) {
+            _searchResult = loanDao.searchLoans(loanerName, amountStart, amountEnd, dateStart, dateEnd, isPaid, searchTerm)
+            searchResultMediator.addSource(_searchResult){
+                    result ->
+                searchResultMediator.postValue(result)
+                Log.d("searchTest","searchResultMediator.postValue($result)")
+            }
+        }
+        _isInit = true
+    }
 }
+//due to searchResultMediator.addSource will add a new source every time loanSearch has been call, so it keep create a new observer

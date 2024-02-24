@@ -1,22 +1,35 @@
 <resources>
     <string name="app_name">LoanManagement</string>
-    <string name="total_amount"> Total Amount</string>
+    <string name="total_amount">Total amount</string>
     <string name="loan_date">Date</string>
+    <string name="loan_date_hint">Choose date here</string>
     <string name="loaner_name">Loaner</string>
-    <string name="loaner_name_hint">Type or choose Loaner name</string>
+    <string name="loaner_name_hint">Enter loaner name</string>
     <string name="loan_amount">Amount</string>
     <string name="loan_isPaid">Is Paid</string>
     <string name="loan_note">Note</string>
-    <string name="loan_note_hint">Type Note here</string>
+    <string name="loan_note_hint">Enter note here</string>
     <string name="isPaid_yes">Yes</string>
     <string name="isPaid_no">No</string>
-    <string name="cancel">cancel</string>
-    <string name="add">add</string>
-    <string name="edit">edit</string>
-
+    <string name="cancel">Cancel</string>
+    <string name="add">Add</string>
+    <string name="edit">Edit</string>
+    <string name="search">Search</string>
+    <string name="zero" translatable="false">0</string>
+    <string name="delete">Delete</string>
+    <string name="pls_fill_all_fields">Please fill in all fields.</string>
+    <string name="add_record">Add Record</string>
+    <string name="edit_record">Edit Record</string>
+    <string name="search_record">Search Record</string>
+    <string name="all_record">All Record</string>
     <string-array name="isPaidSpinner">
         <item>Yes</item>
         <item>No</item>
     </string-array>
-
+    <string-array name="isSearchPaidSpinner">
+        <item> </item>
+        <item>Yes</item>
+        <item>No</item>
+    </string-array>
+    <string name="loan_note_search_hint">Enter search keyword here</string>
 </resources>

@@ -93,7 +93,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="center"
-                android:text="@{ item.paid ? @string/isPaid_yes : @string/isPaid_no }"/>
+                android:text="@{ item.isPaid ? @string/isPaid_yes : @string/isPaid_no }"/>
 
         </LinearLayout>
 
