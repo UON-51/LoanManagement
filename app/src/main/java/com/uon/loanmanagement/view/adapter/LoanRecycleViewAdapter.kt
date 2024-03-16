@@ -30,7 +30,6 @@ class LoanAdapter(private val viewModel: LoanViewModel) : RecyclerView.Adapter<L
         holder.bind(item)
 
         holder.itemView.setOnClickListener{
-            //todo go to edit fragment view
             Log.d("RecycleViewTest",item.toString())
             viewModel.loanSelected(item)
         }

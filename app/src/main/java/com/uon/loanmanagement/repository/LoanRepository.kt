@@ -11,7 +11,6 @@ import kotlinx.coroutines.withContext
 
 
 class LoanRepository(private val loanDao : LoanDao) {
-    // TODO: switch from MediatorLiveData to mutableLiveData
     val searchResultMediator = MediatorLiveData<List<LoanEntity>>() //create a mediatorLiveData for storage search result
     val distinctLoanerNamesMediator = MediatorLiveData<List<String>>()
     private var _isInit = false
@@ -51,7 +50,7 @@ class LoanRepository(private val loanDao : LoanDao) {
             searchResultMediator.removeSource(_searchResult)
         }
 
-        withContext(Dispatchers.IO) {
+        withContext(Dispatchers.Main) {
             _searchResult = loanDao.searchLoans(loanerName, amountStart, amountEnd, dateStart, dateEnd, isPaid, searchTerm)
             searchResultMediator.addSource(_searchResult){
                     result ->

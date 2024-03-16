@@ -2,12 +2,15 @@ package com.uon.loanmanagement.viewmodel
 
 import android.app.Application
 import android.util.Log
+import androidx.databinding.BindingAdapter
 
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.google.android.material.appbar.MaterialToolbar
+import com.uon.loanmanagement.R
 import com.uon.loanmanagement.model.LoanDatabase
 import com.uon.loanmanagement.model.LoanEntity
 import com.uon.loanmanagement.repository.LoanRepository
@@ -15,42 +18,54 @@ import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 
 
-class LoanViewModel(application: Application): AndroidViewModel(application) {
+class LoanViewModel(private val application: Application): AndroidViewModel(application) {
     private val loanRepository: LoanRepository by lazy {
         LoanRepository(loanDao)
     }
 
-    private val _nowTitle: MutableLiveData<String> = MutableLiveData("AllRecord") //todo get from loanerName
-    val nowTitle: LiveData<String> get() = _nowTitle
     private val loanDao = LoanDatabase.getDatabase(application).loanDao()
-    val selectedLoan : MutableLiveData<LoanEntity> = MutableLiveData()
 
+
+    private val _selectedLoan : MutableLiveData<LoanEntity> = MutableLiveData()
+    val selectedLoan : LiveData<LoanEntity> get()= _selectedLoan
+
+    /*
+    private val _nowTitle: MutableLiveData<String> = MutableLiveData(application.getString(R.string.all_record))
+    val nowTitle: MutableLiveData<String> get() = _nowTitle
+    */
+
+    //navigateToMainFragment:observer value indicating when to return to MainFragment
     private val _navigateToMainFragment : MutableLiveData<Boolean> = MutableLiveData(true)
     val navigateToMainFragment : LiveData<Boolean> get() = _navigateToMainFragment
+
+    private val _navigationControl : MutableLiveData<Int> = MutableLiveData(0)
+    val navigationControl : LiveData<Int>  get()= _navigationControl
+
+    //isInDefault:sets searchResult to default when true
     private val _isInDefault : MutableLiveData<Boolean> = MutableLiveData(true)
     val isInDefault : LiveData<Boolean> get() = _isInDefault
+
+    //insertFieldsIsEmpty:Checks if any fields are empty
     private val _insertFieldsIsEmpty : MutableLiveData<Boolean> = MutableLiveData(false)
     val insertFieldsIsEmpty : LiveData<Boolean> get() = _insertFieldsIsEmpty
 
+    //searchResult:stores search results from loanRepository.searchResultMediator
     private val _searchResult : MediatorLiveData<List<LoanEntity>> = loanRepository.searchResultMediator
     val searchResult : LiveData<List<LoanEntity>> get() = _searchResult
+
+    private val _inSearching : MutableLiveData<Boolean> = MutableLiveData(false)
+    val inSearching : LiveData<Boolean> get() = _inSearching
+
+    //distinctLoanerName:stores distinct loaner names
     private val _distinctLoanerName : MediatorLiveData<List<String>> = loanRepository.distinctLoanerNamesMediator
     val distinctLoanerName : LiveData<List<String>> get() = _distinctLoanerName
 
     init {
         searchResultInit()
         distinctLoanerNamesInit()
-        /*
-        isInDefault.observeForever {
-            if (it){
-                searchResultInit()
-            }
-        }
-         */
     }
 
     fun loanSearch(loanerName: String?, amountStartString: String?,amountEndString: String?,dateStartString:String?,dateEndString:String?, isPaidInt: Int, searchTermString: String?){
-        //TODO finish search function link
         _navigateToMainFragment.postValue(false)
         try {
             //Avoid sending blank content and format error
@@ -83,10 +98,8 @@ class LoanViewModel(application: Application): AndroidViewModel(application) {
                 )
             }
             _isInDefault.postValue(false)
-            if (!loanerNameChecked.isNullOrEmpty()) {
-                _nowTitle.postValue(loanerNameChecked!!)
-            }
             _navigateToMainFragment.postValue(true)
+            _inSearching.postValue(true)
         } catch (e:Exception){
             Log.d("Search Error","Search Error: $e")
         }
@@ -158,14 +171,18 @@ class LoanViewModel(application: Application): AndroidViewModel(application) {
 
     }
 
-    //todo add function to clear selectedLoan
+
 
     fun loanSelected(loan : LoanEntity){
-        selectedLoan.value = loan
+        _selectedLoan.postValue(loan)
     }
 
+
+
     fun searchEnd(){
+        searchResultInit()
         _isInDefault.postValue(true)
+        _inSearching.postValue(false)
     }
 
 

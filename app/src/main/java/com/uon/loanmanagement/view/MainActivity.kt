@@ -1,7 +1,10 @@
 package com.uon.loanmanagement.view
 
+import android.app.Application
+import android.content.res.Resources
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.viewModels
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
@@ -50,9 +53,30 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding.topToolBar.setNavigationOnClickListener {
-            navigateToFragment(MainFragment())
-            binding.topToolBar.setTitle(R.string.all_record)
+            when(binding.topToolBar.title.toString()){
+                getString(R.string.search_result) -> {
+                    loanViewModel.searchEnd()
+                    Log.d("navigationTest","true")
+                }
+                else -> {
+                    navigateToFragment(MainFragment())
+                    Log.d("navigationTest","false")
+                }
+            }
+
         }
+
+        loanViewModel.navigationControl.observe(this){
+            when(it){
+                0 -> {
+                    navigateToFragment(MainFragment())
+                }
+                else -> {
+                    Log.d("navigationControl Error", "navigationControl Error it = $it")
+                }
+            }
+        }
+
 
         loanViewModel.selectedLoan.observe(this){
             navigateToFragment(EditFragment())
@@ -65,6 +89,13 @@ class MainActivity : AppCompatActivity() {
                 binding.topToolBar.navigationIcon = null
             } else {
                 showNavigationIcon()
+            }
+        }
+        loanViewModel.inSearching.observe(this){
+            if (it){
+                binding.topToolBar.setTitle(R.string.search_result)
+            } else {
+                binding.topToolBar.setTitle(R.string.all_record)
             }
         }
         loanViewModel.navigateToMainFragment.observe(this){

@@ -1,5 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string-array name="isPaidSpinner">
+        <item>是</item>
+        <item>否</item>
+    </string-array>
+    <string-array name="isSearchPaidSpinner">
+        <item> </item>
+        <item>是</item>
+        <item>否</item>
+    </string-array>
     <string name="app_name">LoanManagement</string>
     <string name="total_amount">總金額</string>
     <string name="loan_date">日期</string>
@@ -9,11 +18,6 @@
     <string name="loan_note">註記</string>
     <string name="isPaid_yes">是</string>
     <string name="isPaid_no">否</string>
-
-    <string-array name="isPaidSpinner">
-        <item>是</item>
-        <item>否</item>
-    </string-array>
     <string name="loaner_name_hint">請輸入或選擇借款人名稱</string>
     <string name="loan_note_hint">請輸入註記</string>
     <string name="cancel">取消</string>
@@ -28,4 +32,5 @@
     <string name="search_record">搜尋紀錄</string>
     <string name="all_record">全部紀錄</string>
     <string name="loan_note_search_hint">請在此輸入搜尋關鍵字</string>
+    <string name="search_result">搜尋結果</string>
 </resources>
