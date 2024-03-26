@@ -17,7 +17,6 @@ import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
 
-//todo navigation button set selectedLoan to null
 class EditFragment : Fragment() {
     private lateinit var binding: FragmentEditBinding
     private val loanViewModel: LoanViewModel by activityViewModels()

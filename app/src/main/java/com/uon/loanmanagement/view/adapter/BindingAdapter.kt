@@ -7,16 +7,12 @@ import android.widget.EditText
 import android.widget.Spinner
 import android.widget.TextView
 import androidx.databinding.BindingAdapter
-import androidx.databinding.InverseBindingAdapter
-import androidx.lifecycle.LiveData
-import com.google.android.material.appbar.MaterialToolbar
 import java.text.SimpleDateFormat
 import java.util.Date
 
 
 @BindingAdapter("convertLongToDate")
 fun convertLongToDate(textView: TextView, date:Long){
-    //todo To get local formatting
     textView.text = SimpleDateFormat("yyyy/MM/dd").format(Date(date))
 }
 @BindingAdapter("editLoanerNameInit")
@@ -41,7 +37,6 @@ fun editAmountInit(editText: EditText, selectedAmount:Float){
 }
 @BindingAdapter("editDateInit")
 fun editDateInit(textView: TextView, selectedDate:Long){
-    //todo To get local formatting
     textView.viewTreeObserver.addOnGlobalLayoutListener(object :ViewTreeObserver.OnGlobalLayoutListener{
         override fun onGlobalLayout() {
             textView.viewTreeObserver.removeOnGlobalLayoutListener(this)

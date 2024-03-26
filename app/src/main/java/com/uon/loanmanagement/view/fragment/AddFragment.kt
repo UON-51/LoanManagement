@@ -17,8 +17,6 @@ import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
 
-//todo make it conform to the MVVM design pattern
-//todo navigation button set selectedLoan to null
 class AddFragment : Fragment() {
     private lateinit var binding: FragmentAddBinding
     private val loanViewModel: LoanViewModel by activityViewModels()

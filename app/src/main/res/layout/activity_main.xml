@@ -7,9 +7,6 @@
         <variable
             name="viewModel"
             type="com.uon.loanmanagement.viewmodel.LoanViewModel" />
-        <variable
-            name="nowTitle"
-            type="String" />
     </data>
 
 
@@ -28,15 +25,12 @@
                 style="@style/Widget.MaterialComponents.Toolbar.Primary"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
-                app:title="@{nowTitle}"
                 app:menu="@menu/main_menu">
-
             </androidx.appcompat.widget.Toolbar>
         </com.google.android.material.appbar.AppBarLayout>
 
         <androidx.fragment.app.FragmentContainerView
             android:id="@+id/fragmentContainerView"
-
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:layout_constraintBottom_toBottomOf="parent"

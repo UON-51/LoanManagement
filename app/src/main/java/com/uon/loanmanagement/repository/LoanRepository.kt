@@ -12,9 +12,9 @@ import kotlinx.coroutines.withContext
 
 class LoanRepository(private val loanDao : LoanDao) {
     val searchResultMediator = MediatorLiveData<List<LoanEntity>>() //create a mediatorLiveData for storage search result
-    val distinctLoanerNamesMediator = MediatorLiveData<List<String>>()
-    private var _isInit = false
     private lateinit var _searchResult : LiveData<List<LoanEntity>>
+    private var _isInit = false
+    val distinctLoanerNamesMediator = MediatorLiveData<List<String>>()
 
 
     //function for insert loan record
@@ -61,4 +61,3 @@ class LoanRepository(private val loanDao : LoanDao) {
         _isInit = true
     }
 }
-//due to searchResultMediator.addSource will add a new source every time loanSearch has been call, so it keep create a new observer

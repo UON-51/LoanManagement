@@ -1,13 +1,11 @@
 package com.uon.loanmanagement.view
 
-import android.app.Application
-import android.content.res.Resources
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.viewModels
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.MutableLiveData
 
 
 import com.uon.loanmanagement.R
@@ -24,28 +22,27 @@ import com.uon.loanmanagement.viewmodel.LoanViewModel
 class MainActivity : AppCompatActivity() {
     private val loanViewModel: LoanViewModel by viewModels()
     private lateinit var binding : ActivityMainBinding
+    private val titleLiveData : MutableLiveData<String> = MutableLiveData()  //a liveData for observer when should navigationIcon display
+    private lateinit var lastTitle : String  //variable for storage witch title should main_fragment display
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        navigateToFragment(MainFragment())
 
         binding = DataBindingUtil.setContentView(this,R.layout.activity_main)
         binding.viewModel=loanViewModel
         binding.lifecycleOwner = this
         binding.topToolBar.navigationIcon = null
 
+        fragmentHandler(getString(R.string.all_record))  //initialize title and fragment to "all record" and main_fragment
+
         binding.topToolBar.setOnMenuItemClickListener{menuItem ->
             when(menuItem.itemId){
-                R.id.menu_search -> {
-                    navigateToFragment(SearchFragment())
-                    showNavigationIcon()
-                    binding.topToolBar.setTitle(R.string.search_record)
+                R.id.menu_search -> {  //switch to search record fragment
+                    fragmentHandler(getString(R.string.search_record))
                     true
                 }
-                R.id.menu_add -> {
-                    navigateToFragment(AddFragment())
-                    showNavigationIcon()
-                    binding.topToolBar.setTitle(R.string.add_record)
+                R.id.menu_add -> {  //switch to add record fragment
+                    fragmentHandler(getString(R.string.add_record))
                     true
                 }
                 else -> {false}
@@ -53,60 +50,53 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding.topToolBar.setNavigationOnClickListener {
-            when(binding.topToolBar.title.toString()){
-                getString(R.string.search_result) -> {
-                    loanViewModel.searchEnd()
-                    Log.d("navigationTest","true")
-                }
-                else -> {
-                    navigateToFragment(MainFragment())
-                    Log.d("navigationTest","false")
-                }
-            }
-
-        }
-
-        loanViewModel.navigationControl.observe(this){
-            when(it){
-                0 -> {
-                    navigateToFragment(MainFragment())
-                }
-                else -> {
-                    Log.d("navigationControl Error", "navigationControl Error it = $it")
-                }
+            //because
+            if (binding.topToolBar.title.toString() == getString(R.string.search_result)){
+                loanViewModel.searchEnd()
+            } else {
+                fragmentHandler(lastTitle)
             }
         }
 
-
+        //observe loanViewModel.selectedLoan and show the loan record witch the user clicked
         loanViewModel.selectedLoan.observe(this){
-            navigateToFragment(EditFragment())
-            showNavigationIcon()
-            binding.topToolBar.setTitle(R.string.edit_record)
+            fragmentHandler(getString(R.string.edit_record))
         }
 
-        loanViewModel.isInDefault.observe(this){
-            if (it){
-                binding.topToolBar.navigationIcon = null
-            } else {
-                showNavigationIcon()
-            }
-        }
+        //set toolbar title base on loanViewModel.inSearching
         loanViewModel.inSearching.observe(this){
-            if (it){
-                binding.topToolBar.setTitle(R.string.search_result)
+            lastTitle = if (it){
+                getString(R.string.search_result)
             } else {
-                binding.topToolBar.setTitle(R.string.all_record)
+                getString(R.string.all_record)
             }
+            fragmentHandler(lastTitle)
+
         }
+
+        //observe loanViewModel.navigateToMainFragment to switch back to MainFragment
         loanViewModel.navigateToMainFragment.observe(this){
             if (it){
-                navigateToFragment(MainFragment())
+                fragmentHandler(lastTitle)
             }
         }
-    }
 
-    private fun showNavigationIcon(){
-        binding.topToolBar.setNavigationIcon(com.google.android.material.R.drawable.material_ic_keyboard_arrow_left_black_24dp)
+
+        titleLiveData.observe(this){
+            when(it){
+                getString(R.string.all_record) -> {
+                    binding.topToolBar.navigationIcon = null
+                }
+                else -> {
+                    binding.topToolBar.setNavigationIcon(
+                        com.google.android.material.R.drawable.
+                        material_ic_keyboard_arrow_left_black_24dp
+                    )
+                }
+
+            }
+
+        }
     }
 
     private fun navigateToFragment(targetFragment:Fragment){
@@ -114,4 +104,25 @@ class MainActivity : AppCompatActivity() {
             .replace(R.id.fragmentContainerView,targetFragment)
             .commit()
     }
+     fun fragmentHandler(title2Switch:String){
+        when (title2Switch){
+            getString(R.string.edit_record) -> {
+                navigateToFragment(EditFragment())
+
+            }
+            getString(R.string.add_record) -> {
+                navigateToFragment(AddFragment())
+            }
+            getString(R.string.search_record) -> {
+                navigateToFragment(SearchFragment())
+            }
+            else -> {
+                navigateToFragment(MainFragment())
+            }
+        }
+        binding.topToolBar.setTitle(title2Switch)
+        titleLiveData.postValue(title2Switch)
+
+    }
+
 }
