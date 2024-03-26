@@ -21,7 +21,7 @@
 |  |  |--adapter                       #包含所有UI元件的adapter
 |  |  |  |--BindingAdapter.kt
 |  |  |  |--LoanRecycleViewAdapter.kt
-|  |  |--fragment                      #包含所有的fragment UI
+|  |  |--fragment                      #包含所有的fragment
 |  |  |  |--AddFragment.kt
 |  |  |  |--EditFragment.kt
 |  |  |  |--MainFragment.kt
