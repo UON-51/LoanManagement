@@ -9,6 +9,8 @@ android {
     namespace = "com.uon.loanmanagement"
     compileSdk = 34
 
+
+
     defaultConfig {
         applicationId = "com.uon.loanmanagement"
         minSdk = 24
@@ -16,16 +18,22 @@ android {
         versionCode = 1
         versionName = "1.0"
 
+
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
     buildTypes {
-        release {
+        getByName("release"){
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            isDebuggable = false
+        }
+        getByName("debug"){
+            applicationIdSuffix = ".debug"
+            isDebuggable = true
         }
     }
     compileOptions {
